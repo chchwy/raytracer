@@ -27,9 +27,9 @@ int main()
     {
         for (int x = 0; x < WIDTH; ++x)
         {
-            float r = float(x) / WIDTH;
-            float g = float(y) / HEIGHT;
-            float b = 0.2f;
+            float r = float(x) / (WIDTH - 1);
+            float g = float(y) / (HEIGHT - 1);
+            float b = 0.25f;
             plot(x, y, r, g, b, 1.0f);
         }
     }
