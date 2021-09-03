@@ -23,17 +23,43 @@ void plot(int x, int y, float r, float g, float b, float a)
     g_img[p + 3] = uint8_t(a * 255);
 }
 
+void plot(int x, int y, color c)
+{
+    plot(x, y, c[0], c[1], c[2], 1.0f);
+}
+
+color rayColor(const Ray& r)
+{
+    vec3 unitDirection = unit_vector(r.direction());
+    auto t = 0.5 * (unitDirection.y() + 1.0);
+    return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
+}
+
 int main()
 {
+    constexpr double aspectRatio = double(WIDTH) / double(HEIGHT);
+
+    // Camera
+    const double viewportHeight = 2.0;
+    const double viewportWidth = viewportHeight * aspectRatio;
+    const double focalLength = 1.0;
+
+    point3 origin(0, 0, 0);
+    vec3 horizontal(viewportWidth, 0, 0);
+    vec3 vertical(0, viewportHeight, 0);
+    auto lowerLeftCorner = origin - (horizontal / 2) - (vertical / 2) - vec3(0, 0, focalLength);
+
     for (int y = 0; y < HEIGHT; ++y)
     {
         std::cerr << "Scanlines remaining: " << (HEIGHT - y) << "\n" << std::flush;
         for (int x = 0; x < WIDTH; ++x)
         {
-            float r = float(x) / (WIDTH - 1);
-            float g = float(y) / (HEIGHT - 1);
-            float b = 0.25f;
-            plot(x, y, r, g, b, 1.0f);
+            float u = float(x) / (WIDTH - 1);
+            float v = float(y) / (HEIGHT - 1);
+
+            Ray ray(origin, lowerLeftCorner + u * horizontal + v * vertical - origin);
+            color c = rayColor(ray);
+            plot(x, y, c);
         }
     }
     stbi_write_png("out.png", WIDTH, HEIGHT, CHANNELS, g_img, STRIDE);
