@@ -25,6 +25,7 @@ int main()
 {
     for (int y = 0; y < HEIGHT; ++y)
     {
+        std::cerr << "Scanlines remaining: " << (HEIGHT - y) << "\n" << std::flush;
         for (int x = 0; x < WIDTH; ++x)
         {
             float r = float(x) / (WIDTH - 1);
@@ -35,6 +36,9 @@ int main()
     }
     stbi_write_png("out.png", WIDTH, HEIGHT, CHANNELS, g_img, STRIDE);
     stbi_write_jpg("out.jpg", WIDTH, HEIGHT, CHANNELS, g_img, 90);
+
+    std::cerr << "\nDone.\n";
+    system("start out.png");
 
     return 0;
 }
